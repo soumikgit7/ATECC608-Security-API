@@ -33,7 +33,33 @@ def generate_key_pair():
         "public_key": public_key
     }
 
-    # Convert public key to bytes for API response
+    # Convert public key to PEM format
+    public_key_bytes = public_key.public_bytes(
+        encoding=Encoding.PEM,
+        format=PublicFormat.SubjectPublicKeyInfo
+    )
+
+    return {
+        "key_id": key_id,
+        "algorithm": "ECC",
+        "curve": "secp256r1",
+        "public_key": public_key_bytes.decode("utf-8")
+    }
+
+
+def get_public_key(key_id: str):
+    """
+    Retrieve the public key associated with a key ID.
+    """
+
+    key_data = _key_store.get(key_id)
+
+    if key_data is None:
+        return None
+
+    public_key = key_data["public_key"]
+
+    # Convert public key to PEM format
     public_key_bytes = public_key.public_bytes(
         encoding=Encoding.PEM,
         format=PublicFormat.SubjectPublicKeyInfo

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.api.routes import keys, random,hashing
+from app.api.routes import keys, random,hashing,ecdsa,ecdh
 
 
 app = FastAPI(
@@ -13,8 +13,8 @@ app = FastAPI(
 app.include_router(keys.router)
 app.include_router(random.router)
 app.include_router(hashing.router)
-
-
+app.include_router(ecdsa.router)
+app.include_router(ecdh.router)
 @app.get("/")
 def root():
     return {

@@ -1,7 +1,6 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
-from app.services.key_service import generate_key_pair
-
+from app.core.key_manager import KeyManager
 
 router = APIRouter(
     prefix="/api/v1/keys",
@@ -11,7 +10,18 @@ router = APIRouter(
 
 @router.post("/generate")
 def generate_keys():
-    return generate_key_pair()
-    return {
-        "message": "Key pair generated successfully"
-    }
+    return KeyManager.generate_key()
+
+
+@router.get("/{key_id}")
+def retrieve_public_key(key_id: str):
+
+    key_data = KeyManager.get_public_key(key_id)
+
+    if key_data is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Key not found"
+        )
+
+    return key_data
