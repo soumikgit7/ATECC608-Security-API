@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ATECC608 Security API</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Inter, Arial, sans-serif;
+            min-height: 100vh;
+            color: #e5e7eb;
+
+            background:
+                radial-gradient(
+                    circle at 10% 20%,
+                    rgba(37, 99, 235, 0.25),
+                    transparent 35%
+                ),
+                radial-gradient(
+                    circle at 90% 80%,
+                    rgba(6, 182, 212, 0.18),
+                    transparent 35%
+                ),
+                #070b14;
+        }
+
+
+        /* ---------------- HEADER ---------------- */
+
+        .header {
+            padding: 30px 7%;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .brand-icon {
+            width: 48px;
+            height: 48px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 14px;
+
+            background: rgba(59,130,246,0.15);
+            border: 1px solid rgba(96,165,250,0.3);
+
+            font-size: 24px;
+        }
+
+        .brand h1 {
+            font-size: 26px;
+            letter-spacing: -0.5px;
+        }
+
+        .brand p {
+            margin-top: 4px;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+
+        /* ---------------- MAIN ---------------- */
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 25px;
+        }
+
+
+        /* ---------------- GLASS ---------------- */
+
+        .glass {
+            background: rgba(255,255,255,0.045);
+
+            border: 1px solid rgba(255,255,255,0.10);
+
+            border-radius: 20px;
+
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+
+            box-shadow:
+                0 20px 50px rgba(0,0,0,0.25);
+
+            transition: 0.25s ease;
+        }
+
+        .glass:hover {
+            border-color: rgba(96,165,250,0.25);
+            transform: translateY(-2px);
+        }
+
+
+        /* ---------------- STATUS ---------------- */
+
+        .status-card {
+            padding: 28px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 35px;
+        }
+
+        .status-title {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .status-value {
+            font-size: 25px;
+            font-weight: 700;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+
+            padding: 10px 16px;
+
+            border-radius: 30px;
+
+            background: rgba(34,197,94,0.10);
+            border: 1px solid rgba(34,197,94,0.25);
+
+            color: #4ade80;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .dot {
+            width: 9px;
+            height: 9px;
+
+            background: #4ade80;
+
+            border-radius: 50%;
+
+            box-shadow: 0 0 12px #4ade80;
+        }
+
+
+        /* ---------------- SECTION ---------------- */
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            margin-bottom: 18px;
+        }
+
+        .section-header h2 {
+            font-size: 20px;
+        }
+
+        .section-header p {
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+
+        /* ---------------- SERVICES ---------------- */
+
+        .services {
+            display: grid;
+
+            grid-template-columns:
+                repeat(auto-fit, minmax(240px, 1fr));
+
+            gap: 18px;
+        }
+
+        .service-card {
+            padding: 24px;
+        }
+
+        .service-icon {
+            font-size: 27px;
+            margin-bottom: 15px;
+        }
+
+        .service-card h3 {
+            margin-bottom: 9px;
+            font-size: 17px;
+        }
+
+        .service-card p {
+            color: #94a3b8;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .endpoint {
+            display: inline-block;
+
+            margin-top: 15px;
+
+            padding: 6px 9px;
+
+            border-radius: 7px;
+
+            background: rgba(0,0,0,0.25);
+
+            color: #7dd3fc;
+
+            font-family: monospace;
+            font-size: 11px;
+        }
+
+
+        /* ---------------- HARDWARE ---------------- */
+
+        .hardware {
+            padding: 25px;
+        }
+
+        .hardware-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(auto-fit, minmax(200px, 1fr));
+
+            gap: 15px;
+
+            margin-top: 20px;
+        }
+
+        .hardware-item {
+            padding: 18px;
+
+            border-radius: 14px;
+
+            background: rgba(0,0,0,0.18);
+
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .hardware-item span {
+            display: block;
+
+            color: #64748b;
+
+            font-size: 12px;
+
+            margin-bottom: 8px;
+        }
+
+        .hardware-item strong {
+            font-size: 15px;
+        }
+
+        .pending {
+            color: #fbbf24;
+        }
+
+
+        /* ---------------- TEST GUIDE ---------------- */
+
+        .guide {
+            padding: 28px;
+        }
+
+        .guide-step {
+            display: flex;
+
+            gap: 18px;
+
+            padding: 18px 0;
+
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+        }
+
+        .guide-step:last-child {
+            border-bottom: none;
+        }
+
+        .number {
+            min-width: 32px;
+            height: 32px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background: rgba(59,130,246,0.15);
+
+            border: 1px solid rgba(96,165,250,0.25);
+
+            color: #60a5fa;
+
+            font-weight: bold;
+        }
+
+        .guide-step h3 {
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+
+        .guide-step p {
+            color: #94a3b8;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        code {
+            color: #7dd3fc;
+
+            background: rgba(0,0,0,0.3);
+
+            padding: 3px 6px;
+
+            border-radius: 5px;
+
+            font-family: monospace;
+        }
+
+
+        /* ---------------- BUTTONS ---------------- */
+
+        .buttons {
+            display: flex;
+
+            gap: 12px;
+
+            flex-wrap: wrap;
+
+            margin-top: 25px;
+            margin-bottom:25px;
+        }
+
+        .button {
+            display: inline-block;
+
+            padding: 12px 20px;
+
+            border-radius: 10px;
+
+            text-decoration: none;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #0891b2
+                );
+
+            box-shadow:
+                0 8px 25px rgba(37,99,235,0.25);
+
+            transition: 0.2s;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 12px 30px rgba(37,99,235,0.35);
+        }
+
+        .button.secondary {
+            background: rgba(255,255,255,0.07);
+
+            border: 1px solid rgba(255,255,255,0.1);
+
+            box-shadow: none;
+        }
+
+
+        /* ---------------- FOOTER ---------------- */
+
+        .footer {
+            text-align: center;
+
+            padding: 30px;
+
+            color: #475569;
+
+            font-size: 12px;
+        }
+
+
+        /* ---------------- RESPONSIVE ---------------- */
+
+        @media (max-width: 650px) {
+
+            .status-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+
+            .header {
+                padding: 25px;
+            }
+
+            .container {
+                margin-top: 25px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- HEADER -->
+
+<header class="header">
+
+    <div class="header-content">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                🔐
+            </div>
+
+            <div>
+
+                <h1>
+                    ATECC608 Security API
+                </h1>
+
+                <p>
+                    Cryptographic Security Platform for IoT & Blockchain
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+
+<main class="container">
+
+
+    <!-- API STATUS -->
+
+    <section class="glass status-card">
+
+        <div>
+
+            <div class="status-title">
+                SYSTEM STATUS
+            </div>
+
+            <div class="status-value">
+                Security API
+            </div>
+
+            <p style="color:#64748b;margin-top:6px;font-size:13px;">
+                Version 1.0.0 · Local Development
+            </p>
+
+        </div>
+
+
+        <div class="status-indicator">
+
+            <span class="dot"></span>
+
+            API RUNNING
+
+        </div>
+
+    </section>
+
+
+
+    <!-- SERVICES -->
+
+    <section class="section">
+
+        <div class="section-header">
+
+            <h2>
+                Cryptographic Services
+            </h2>
+
+            <p>
+                Core security operations provided by the API
+            </p>
+
+        </div>
+        <div class="buttons">
+
+            <a
+                href="/docs"
+                class="button"
+                target="_blank"
+            >
+                API Testing Interface
+            </a>
+
+            <a
+                href="/redoc"
+                class="button secondary"
+                target="_blank"
+            >
+                API Reference Documentation
+            </a>
+
+        </div>
+
+
+        <div class="services">
+
+
+            <!-- ECDSA -->
+
+            <div class="glass service-card">
+
+                <div class="service-icon">
+                    ✍️
+                </div>
+
+                <h3>
+                    ECDSA
+                </h3>
+
+                <p>
+                    Elliptic Curve Digital Signature Algorithm.
+                    Used to create and verify digital signatures,
+                    allowing applications to prove that data was
+                    signed by the correct private key.
+                </p>
+
+                <span class="endpoint">
+                    /api/v1/ecdsa/sign
+                </span>
+
+            </div>
+
+
+
+            <!-- ECDH -->
+
+            <div class="glass service-card">
+
+                <div class="service-icon">
+                    🔐
+                </div>
+
+                <h3>
+                    ECDH
+                </h3>
+
+                <p>
+                    Elliptic Curve Diffie-Hellman.
+                    Allows two parties to independently derive
+                    the same shared secret without directly
+                    sending the secret across the network.
+                </p>
+
+                <span class="endpoint">
+                    /api/v1/ecdh/derive
+                </span>
+
+            </div>
+
+
+
+            <!-- SHA -->
+
+            <div class="glass service-card">
+
+                <div class="service-icon">
+                    #️⃣
+                </div>
+
+                <h3>
+                    SHA-256
+                </h3>
+
+                <p>
+                    Cryptographic hash function that converts
+                    input data into a fixed 256-bit fingerprint.
+                    Useful for integrity verification and
+                    blockchain-related applications.
+                </p>
+
+                <span class="endpoint">
+                    /api/v1/hash/sha256
+                </span>
+
+            </div>
+
+
+
+            <!-- RANDOM -->
+
+            <div class="glass service-card">
+
+                <div class="service-icon">
+                    🎲
+                </div>
+
+                <h3>
+                    Secure Random
+                </h3>
+
+                <p>
+                    Generates cryptographically secure random
+                    bytes that can be used for nonces, challenges
+                    and other security-related operations.
+                </p>
+
+                <span class="endpoint">
+                    /api/v1/random/generate
+                </span>
+
+            </div>
+
+
+
+            <!-- KEY -->
+
+            <div class="glass service-card">
+
+                <div class="service-icon">
+                    🔑
+                </div>
+
+                <h3>
+                    Key Management
+                </h3>
+
+                <p>
+                    Generates ECC key pairs and manages the
+                    cryptographic identities used by the
+                    security operations.
+                </p>
+
+                <span class="endpoint">
+                    /api/v1/keys/generate
+                </span>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- HARDWARE -->
+
+    <section class="section">
+
+        <div class="section-header">
+
+            <h2>
+                Hardware Integration
+            </h2>
+
+            <p>
+                Hardware-backed cryptography development status
+            </p>
+
+        </div>
+
+
+        <div class="glass hardware">
+
+            <div class="hardware-grid">
+
+
+                <div class="hardware-item">
+
+                    <span>
+                        MICROCONTROLLER
+                    </span>
+
+                    <strong>
+                        ESP32
+                    </strong>
+
+                    <p class="pending"
+                       style="margin-top:6px;font-size:12px;">
+                        Integration Pending
+                    </p>
+
+                </div>
+
+
+                <div class="hardware-item">
+
+                    <span>
+                        SECURE ELEMENT
+                    </span>
+
+                    <strong>
+                        ATECC608
+                    </strong>
+
+                    <p class="pending"
+                       style="margin-top:6px;font-size:12px;">
+                        Integration Pending
+                    </p>
+
+                </div>
+
+
+                <div class="hardware-item">
+
+                    <span>
+                        COMMUNICATION
+                    </span>
+
+                    <strong>
+                        I²C
+                    </strong>
+
+                    <p class="pending"
+                       style="margin-top:6px;font-size:12px;">
+                        Development Stage
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- TESTING GUIDE -->
+
+    <section class="section">
+
+        <div class="section-header">
+
+            <h2>
+                Testing Guide
+            </h2>
+
+            <p>
+                Basic workflow for testing the Security API
+            </p>
+
+        </div>
+
+
+        <div class="glass guide">
+
+
+            <div class="guide-step">
+
+                <div class="number">
+                    1
+                </div>
+
+                <div>
+
+                    <h3>
+                        Generate an ECC Key Pair
+                    </h3>
+
+                    <p>
+                        Open Swagger and execute
+                        <code>POST /api/v1/keys/generate</code>.
+                        Save the returned
+                        <code>key_id</code>.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="guide-step">
+
+                <div class="number">
+                    2
+                </div>
+
+                <div>
+
+                    <h3>
+                        Test ECDSA Signing
+                    </h3>
+
+                    <p>
+                        Send a message together with the
+                        generated key ID to
+                        <code>/api/v1/ecdsa/sign</code>.
+                        The API returns an ECDSA signature.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="guide-step">
+
+                <div class="number">
+                    3
+                </div>
+
+                <div>
+
+                    <h3>
+                        Verify the Signature
+                    </h3>
+
+                    <p>
+                        Send the original message and signature
+                        to <code>/api/v1/ecdsa/verify</code>.
+                        A correct signature should return
+                        <code>"valid": true</code>.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="guide-step">
+
+                <div class="number">
+                    4
+                </div>
+
+                <div>
+
+                    <h3>
+                        Test Tampering
+                    </h3>
+
+                    <p>
+                        Change the original message but keep
+                        the old signature. Verification should
+                        return <code>"valid": false</code>.
+                        This demonstrates data integrity.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="guide-step">
+
+                <div class="number">
+                    5
+                </div>
+
+                <div>
+
+                    <h3>
+                        Test ECDH
+                    </h3>
+
+                    <p>
+                        Generate two ECC keys and use
+                        <code>/api/v1/ecdh/derive</code>.
+                        Both parties should derive the same
+                        shared secret.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="guide-step">
+
+                <div class="number">
+                    6
+                </div>
+
+                <div>
+
+                    <h3>
+                        Test Hashing
+                    </h3>
+
+                    <p>
+                        Send data to
+                        <code>/api/v1/hash/sha256</code>.
+                        The same input should always produce
+                        the same SHA-256 hash.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+
+    </section>
+
+
+
+</main>
+
+
+
+<footer class="footer">
+
+    ATECC608 Security API ·
+    Cryptographic Infrastructure for IoT & Blockchain
+
+</footer>
+
+
+</body>
+
+</html>
