@@ -98,13 +98,13 @@ The current implementation uses software-based cryptography and is designed with
 <tr>
 <td>✍️ ECDSA</td>
 <td>Digital signature generation and verification</td>
-<td>🔜 Planned</td>
+<td>✅ Implemented</td>
 </tr>
 
 <tr>
 <td>🤝 ECDH</td>
 <td>Secure shared-secret derivation</td>
-<td>🔜 Planned</td>
+<td>✅ Implemented</td>
 </tr>
 
 <tr>
